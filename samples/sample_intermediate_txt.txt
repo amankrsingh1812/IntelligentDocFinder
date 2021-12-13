@@ -1,0 +1,18 @@
+Intelligent Document Finder
+Welcome To GeeksforGeeks Learning
+List of available courses
+Data Structures & Algorithm
+Web Technology
+Aptitude & Logical Reasoning
+Programming Languages
+Data Structures topics
+Array
+Linked List
+Stacks
+Queues
+Trees
+Graphs
+This is paragraph_1 under list.
+This is paragraph_2 under list.
+This is to be referred as paragraph_1.
+This is to be referred as paragraph_2.
