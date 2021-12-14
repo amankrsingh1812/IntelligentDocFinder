@@ -3,8 +3,8 @@ from paragraphs_extractor.file_iterator_interface import FileIteratorInterface
 
 class HTMLIterator(FileIteratorInterface):
     def __init__(self, filename):
+        super().__init__()
         self.filename = filename
-        self.paragraphs = []
         
         soup = BeautifulSoup(open(filename), features="html.parser")
 

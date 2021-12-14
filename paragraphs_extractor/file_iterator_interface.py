@@ -1,3 +1,5 @@
+import threading
+
 class FileIteratorInterface:
     """ 
     Attributes:
@@ -7,6 +9,7 @@ class FileIteratorInterface:
     
     def __init__(self):
         self.paragraphs = []
+        self.lock = threading.Lock()
     
     def __iter__(self):
         self.index = 0
@@ -16,6 +19,11 @@ class FileIteratorInterface:
         if self.index < len(self.paragraphs):
             x = self.paragraphs[self.index]
             self.index += 1
-            return x
+            
+            self.lock.acquire()
+            try:
+                return x
+            finally:
+                self.lock.release()
         else:
             raise StopIteration

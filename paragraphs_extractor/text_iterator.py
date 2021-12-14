@@ -3,8 +3,8 @@ from paragraphs_extractor.file_iterator_interface import FileIteratorInterface
 
 class TXTIterator(FileIteratorInterface):
     def __init__(self, filename):
-        self.filename = filename        
-        self.paragraphs = []
+        super().__init__()
+        self.filename = filename
         
         with open(self.filename, "r") as fd:
             for para in fd:

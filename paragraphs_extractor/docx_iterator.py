@@ -3,8 +3,8 @@ from paragraphs_extractor.file_iterator_interface import FileIteratorInterface
 
 class DOCXIterator(FileIteratorInterface):
     def __init__(self, filename):
+        super().__init__()
         self.filename = filename
-        self.paragraphs = []
         
         doc = Document(filename)
         for para in doc.paragraphs:
