@@ -1,3 +1,5 @@
+import math
+
 k1 = 1.64
 b = 0.75 
 avg_doc_len = 123        # Retrieve avegrage doc length
@@ -8,8 +10,9 @@ nq = {}
 doc_len = {}
 # idf = {}
 doc_list = set()
+import math
 
-def compute_tf(prargraph_tokens,doc_id):
+def compute_tf(paragraph_tokens, doc_id):
     doc_list.add(doc_id)
     
     if doc_id not in tf:
@@ -18,7 +21,7 @@ def compute_tf(prargraph_tokens,doc_id):
     if doc not in doc_len:
         doc_len[doc_id]=0
         
-    for token in tokens:
+    for token in paragraph_tokens:
         if token not in tf[doc_id]:
             tf[doc_id][token]=0
         tf[doc_id][token]+=1
@@ -46,4 +49,8 @@ def compute_score(token,doc_id):
     f_qi = tf[doc_id][token]
     D = doc_len[doc_id]
     
-    doc_id[score][token] = lambda x: ((idf_qi*f_qi*(k1+1)/(f_qi+k1*(1 - b + b * D/x)))
+    doc_id[score][token] = lambda x: ((idf_qi*f_qi*(k1+1)/(f_qi+k1*(1 - b + b * D/x))))
+    
+
+def cal_tf(lem_tokens):
+    return lem_tokens

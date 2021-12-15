@@ -7,6 +7,9 @@ TODOs
 
 3. For PPTX add logic to extract finer paragraphs
     from shapes in slides
+    
+4. Replace naive tokenizer with RegEx based tockenizer
+   Ref - https://stackoverflow.com/questions/3845423/remove-empty-strings-from-a-list-of-strings
 """
 
 

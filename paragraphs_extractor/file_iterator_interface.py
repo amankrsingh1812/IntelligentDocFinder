@@ -10,6 +10,7 @@ class FileIteratorInterface:
     def __init__(self):
         self.paragraphs = []
         self.lock = threading.Lock()
+        self.index = 0
     
     def __iter__(self):
         self.index = 0
@@ -27,3 +28,6 @@ class FileIteratorInterface:
                 self.lock.release()
         else:
             raise StopIteration
+            
+    def get_num_paras(self):
+        return len(self.paragraphs)
