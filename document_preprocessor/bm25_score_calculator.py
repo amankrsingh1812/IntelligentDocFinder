@@ -2,11 +2,11 @@ import math
 
 k1 = 1.64
 b = 0.75 
-avg_doc_len = 123        # Retrieve avegrage doc length
+avg_doc_len = 123        # Retrieve average doc length
 
 score = {}
 tf = {}
-nq = {}
+nq = {}                  # nq[token] = set(docs containing that token at least once)
 doc_len = {}
 # idf = {}
 doc_list = set()
@@ -16,10 +16,10 @@ def compute_tf(paragraph_tokens, doc_id):
     doc_list.add(doc_id)
     
     if doc_id not in tf:
-        tf[doc_id]={}
+        tf[doc_id] = {}
         
     if doc not in doc_len:
-        doc_len[doc_id]=0
+        doc_len[doc_id] = 0
         
     for token in paragraph_tokens:
         if token not in tf[doc_id]:
@@ -32,18 +32,16 @@ def compute_tf(paragraph_tokens, doc_id):
             nq[token]=set()
         nq[token].add(doc_id)
     
-def get_idf(token):
-    N = doc_list.size
-    nqi = 0
-    if token in nq:
-        nqi=nq[token].size
+def get_idf(token: str) -> float:
+    N = len(doc_list)
+    nqi = len(nq[token]) if token in nq else 0
     
     idf = math.log((N-nqi+0.5)/(nqi+0.5)+1)
     return idf
 
-def compute_score(token,doc_id):
+def compute_score(token: str, doc_id):
     if doc_id not in score:
-        doc_id[score]={}
+        doc_id[score] = {}
     
     idf_qi = get_idf(token)
     f_qi = tf[doc_id][token]

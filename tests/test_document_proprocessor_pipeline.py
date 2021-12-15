@@ -7,12 +7,13 @@ from document_preprocessor.bm25_score_calculator import cal_tf
 
 def test_txt_file():
     iterator = IteratorFactory.get_iterator(generate_filename("txt"), "txt")
-    preprocess_pipeline = DistributedPipeline(file_iterator  =  iterator,
+    preprocess_pipeline = DistributedPipeline(file_iterator = iterator,
                                               stage_functions = [
-                                                  remove_punctuation,
                                                   tokenize,
                                                   lemmatizer_and_lowertext,
-                                                  remove_stopwords
+                                                  remove_punctuation,
+                                                  remove_stopwords,
+                                                  stemm_text,
                                               ], 
                                               accumulator = cal_tf)
     
