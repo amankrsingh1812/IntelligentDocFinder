@@ -5,3 +5,4 @@ build/
 dist/
 goorm.manifest
 playground/
+tests/lmdb_*

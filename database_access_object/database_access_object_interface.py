@@ -1,4 +1,4 @@
-class dao_interface:
+class DAOInterface:
     def start_session(self):
         pass
     
@@ -20,9 +20,5 @@ class dao_interface:
     def get_doc_list(self) -> list:
         pass
     
-    def get_paragraph_embeddings(self, doc_id: str) -> list:
-        """
-        Returns:
-            list of list containing values as dict
-        """
+    def get_doc_attributes(self, doc_id: str) -> dict:
         pass
