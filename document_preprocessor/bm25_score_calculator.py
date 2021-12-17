@@ -39,7 +39,7 @@ def get_idf(token: str) -> float:
     idf = math.log((N-nqi+0.5)/(nqi+0.5)+1)
     return idf
 
-def compute_score(token: str, doc_id):
+def compute_score(token: str, doc_id: str):
     if doc_id not in score:
         doc_id[score] = {}
     
@@ -49,6 +49,3 @@ def compute_score(token: str, doc_id):
     
     doc_id[score][token] = lambda x: ((idf_qi*f_qi*(k1+1)/(f_qi+k1*(1 - b + b * D/x))))
     
-
-def cal_tf(lem_tokens):
-    return lem_tokens

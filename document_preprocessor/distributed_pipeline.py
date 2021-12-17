@@ -1,7 +1,6 @@
 from queue import Queue
 from threading import Thread
 
-
 class DistributedPipeline:
     _sentinel = object()
     
@@ -74,7 +73,6 @@ class DistributedPipeline:
             try:
                 data = next(file_iterator)
             except StopIteration:
-                # out_queue.put(DistributedPipeline._sentinel)
                 break
             out_queue.put(data)
 
@@ -84,7 +82,6 @@ class DistributedPipeline:
         while True:
             data = in_queue.get()
             if data is DistributedPipeline._sentinel:
-                # out_queue.put(data)
                 in_queue.put(data)
                 break
             
@@ -95,14 +92,11 @@ class DistributedPipeline:
     @staticmethod    
     def accumulator_thread_function(in_queue, accumulator, num_paragraphs):
         counter = 0
-        out = []
         while True:
             data = in_queue.get()
-            # if data is DistributedPipeline._sentinel:
             counter += 1
             if counter == num_paragraphs:
                 break
-                
-            processed_data = accumulator(data)
-            out += processed_data
-        return out
+            accumulator.accumulate(data)
+            
+        return accumulator.get_result()

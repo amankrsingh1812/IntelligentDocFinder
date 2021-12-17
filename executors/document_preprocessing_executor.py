@@ -1,12 +1,16 @@
-from utils import *
 from paragraphs_extractor.iterator_factory import IteratorFactory
 from document_preprocessor.data_cleaners import *
 from document_preprocessor.distributed_pipeline import *
+from database_access_object.lmdb_database_access_object import *
+from utils import Filetypes
 from document_preprocessor.accumulator import DocPreprocessingAccumulator
 
-def test_txt_file():
-    iterator = IteratorFactory.get_iterator(generate_filename("txt"), "txt")
+def insert_document(filepath: str, extension: Filetypes):
+    # Create iterator for file
+    iterator = IteratorFactory.get_iterator(filepath, extension)
     doc_preprocessing_accumulator = DocPreprocessingAccumulator()
+
+    # Compute tf mapping for file
     preprocess_pipeline = DistributedPipeline(file_iterator = iterator,
                                               stage_functions = [
                                                   tokenize,
@@ -17,9 +21,24 @@ def test_txt_file():
                                               ], 
                                               accumulator = doc_preprocessing_accumulator)
     
-    preprocessed_data = preprocess_pipeline.run()
-    print("DONE")    
-    print(preprocessed_data)    
-    print("DONE")
+    tf_map, num_tokens = preprocess_pipeline.run()
     
-test_txt_file()
+    # Compute sentence embeddings 
+    # TODO
+    # paragraphs_embeddings = create_para_embeddings(file_iterator = iterator)
+    
+    # Create tags for the file
+    # TODO
+    # tags = create_tags(file_iterator = iterator)
+
+    # TODO(low priority): manual tagging
+    
+    # Insert document into database
+    lmdbdao = LMDBdao(BASE_DIR)
+    lmdbdao.open_session(True)
+    lmdbdao.add_document(filepath,
+                         paragraphs_embeddings,
+                         tags,
+                         num_tokens,
+                         tf_map)
+    lmdbdao.close_session()
