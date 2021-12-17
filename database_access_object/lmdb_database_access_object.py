@@ -93,7 +93,18 @@ class lmdb_dao(dao_interface):
     # TO_DO
     def delete_document(self, doc_id: str) -> bool:
         self.__check_requirements()
-        
+
+        # 1. Decrement the count for affected tokens in nq store
+        tokens_list = self.txn.get(doc_id.encode('ascii', db=self.db_map['token']))
+        for token in tokens_list:
+            token_key = token.encode('ascii')
+            val = self.txn.get(token_key, db=self.db_map['tf'])
+            self.txn.replace(token_key, val - 1)
+        # To-do: https://lmdb.readthedocs.io/en/release/#lmdb.Cursor.getmulti --> Check if it is optimized
+           
+        # 2. Delete entries from tf store
+        # 3. Delete entry from token store 
+        # 4. Delete document from document store
         
     
     def get_tf_token(self, token: str, doc_id: str) -> int:
