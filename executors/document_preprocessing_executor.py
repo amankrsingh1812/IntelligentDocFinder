@@ -34,7 +34,7 @@ def insert_document(filepath: str, extension: Filetypes):
     # TODO(low priority): manual tagging
     
     # Insert document into database
-    lmdbdao = LMDBdao(BASE_DIR)
+    lmdbdao = LMDBdao.get_dao(BASE_DIR)
     lmdbdao.open_session(True)
     lmdbdao.add_document(filepath,
                          paragraphs_embeddings,

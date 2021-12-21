@@ -3,8 +3,15 @@ import lmdb, pickle, uuid
 
 class LMDBdao(DAOInterface):
     stores = ['tf', 'nq', 'doc', 'token']
+    dao = None
     
-    def __init__(self, lmbd_dir = '/workspace/doc-finder/lmdb_database/'):
+    @staticmethod
+    def get_dao(lmdb_dir = '/workspace/doc-finder/lmdb_database/'):
+        if LMDBdao.dao is None:
+            LMDBdao.dao = LMDBdao(lmdb_dir)
+        return LMDBdao.dao
+    
+    def __init__(self, lmbd_dir):
         print("[Testing-LMDBdao]: init function invoked")
         self.lmdb_dir = lmbd_dir
         self.environment_name = self.lmdb_dir

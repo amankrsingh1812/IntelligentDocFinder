@@ -36,12 +36,13 @@ def del_db():
     print('[Testing]: Deleting the database')
     if os.path.exists(TestingData.DB_DIR):
         shutil.rmtree(TestingData.DB_DIR)
+    LMDBdao.dao = None
     
 
 class LMDBdaoTest(unittest.TestCase):        
     def setUp(self):
         init_db()
-        self.lmdbdao = LMDBdao(TestingData.DB_DIR)
+        self.lmdbdao = LMDBdao.get_dao(TestingData.DB_DIR)
     
     def test_get_tf_token(self):
         self.lmdbdao.open_session()
@@ -90,7 +91,7 @@ class LMDBdaoTest(unittest.TestCase):
         
         # Test doc_list
         doc_list = self.lmdbdao.get_doc_list()
-        self.assertEqual(len(doc_list), 3)
+        self.assertEqual(len(doc_list), 5)
         
         # Test nq_store
         self.assertEqual(self.lmdbdao.get_nq_token('hello'), 2)
@@ -117,7 +118,7 @@ class LMDBdaoTest(unittest.TestCase):
         doc_list = self.lmdbdao.get_doc_list()
         
         # Test doc_list
-        self.assertEqual(len(doc_list), 1)
+        self.assertEqual(len(doc_list), 3)
         self.assertEqual(doc_list[0], expected)
         
         # Test nq_store

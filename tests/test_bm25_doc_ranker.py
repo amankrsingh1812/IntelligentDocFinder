@@ -39,6 +39,7 @@ def del_db():
     print('[Testing]: Deleting the database')
     if os.path.exists(TestingData.DB_DIR):
         shutil.rmtree(TestingData.DB_DIR)
+    LMDBdao.dao = None
     
 
 class BM25DocRankerTest(unittest.TestCase):
@@ -53,10 +54,16 @@ class BM25DocRankerTest(unittest.TestCase):
         for query_set in queries:
             bm25_doc_ranker = BM25DocRanker(query_set, lmdb_dir = TestingData.DB_DIR)
             top_k_docs = bm25_doc_ranker.get_top_doc_ids(k)
-            print(top_k_docs)
             result.append(top_k_docs)
             del bm25_doc_ranker
         
+        actual = [
+            ['doc_id_3', 'doc_id_1', 'doc_id_2', 'doc_id_4'],
+            ['doc_id_4', 'doc_id_1', 'doc_id_2', 'doc_id_3'],
+            ['doc_id_1', 'doc_id_2', 'doc_id_3', 'doc_id_4']
+        ]
+        
+        self.assertEqual(actual, result)
         
     def tearDown(self):
         print('\n[Testing]: Completed testing!!')

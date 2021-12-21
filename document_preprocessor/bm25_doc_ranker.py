@@ -8,7 +8,7 @@ class BM25DocRanker:
     def __init__(self, query_tokens: set, lmdb_dir = '/workspace/doc-finder/lmdb_database/'):
         self.query_tokens = query_tokens
         
-        self.dao = LMDBdao(lmdb_dir)
+        self.dao = LMDBdao.get_dao(lmdb_dir)
         self.dao.open_session();
         
         self.doc_list = self.dao.get_doc_list()
