@@ -5,21 +5,22 @@ class LMDBdao(DAOInterface):
     stores = ['tf', 'nq', 'doc', 'token']
     
     def __init__(self, lmbd_dir = '/workspace/doc-finder/lmdb_database/'):
-        print("[Testing]: init function invoked")
+        print("[Testing-LMDBdao]: init function invoked")
         self.lmdb_dir = lmbd_dir
         self.environment_name = self.lmdb_dir
         self.env = lmdb.Environment(self.environment_name, max_dbs=5)
         self.txn = None
-        print("[Testing]: env created")
+        print("[Testing-LMDBdao]: env created")
         # self.db_map = self.env.open_db("tf".encode())
         self.db_map = {store: self.env.open_db(store.encode()) 
                        for store in LMDBdao.stores}
-        print("[Testing]: db_map created")
+        print("[Testing-LMDBdao]: db_map created")
         
     def __del__(self):
         if self.txn  is not None:
             raise Exception('Transaction has not stopped')
         self.env.close()
+        print("[Testing-LMDBdao]: env closed")
         
         
     def __check_requirements(self):
