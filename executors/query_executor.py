@@ -1,14 +1,11 @@
-# 1. Retrieve query
-# 2. Get tokens
-# 3. Top k documents
-# 4. Paragraph embeddings of original query
-# 5. MSMARCO + cosine similarity
-# 6. Return required documents
-
 from query_engine.query_augmentor import QueryEngine
 from document_preprocessor.bm25_doc_ranker import BM25DocRanker
+from semantic_embedder.msmarco_embedder import MSMARCOEmbedder
+from query_engine.semantic_sorter import get_docs_info
 
 def execute_query(query: str) -> list:
+    
+    #Filter top k documents
     query_engine = QueryEngine()
     preprocessed_tokens = query_engine.get_processed_augmented_tokens(query)
 
@@ -16,9 +13,9 @@ def execute_query(query: str) -> list:
     top_k_docs = bm25_doc_ranker.get_top_doc_ids(k=2)
 
     # Apply 2nd level filtering
-    # get_docs_info(top_k_docs, curr_query_embedding) 
-        # -> [(cosine_sim, attributes without paragraph embeddings)]
-        
-    # get_csim_with_doc(doc_paragraph_embeddings, curr_query_embedding) -> float:
+    msmarco_embedder = MSMARCOEmbedder.get_embedder()
+    query_embeddings = msmarco_embedder.get_query_embeddings(query)
     
-    # show_relevant_documents([(cosine_sim, attributes without paragraph embeddings)]) 
+    result_docs_list = get_docs_info(top_k_docs, query_embeddings)
+    
+    return result_docs_list

@@ -25,9 +25,7 @@ def insert_document(filepath: str, extension: Filetypes):
     tf_map, num_tokens = preprocess_pipeline.run()
     
     # Compute sentence embeddings 
-    # TODO
     paragraphs_embeddings = MSMARCOEmbedder.get_embedder().get_paragraph_encodings(file_iterator = iterator)
-    # paragraphs_embeddings = []
     
     # Create tags for the file
     # TODO

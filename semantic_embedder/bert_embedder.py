@@ -53,7 +53,7 @@ class BertEmbedder(SemanticEmbedderInterface):
                                         for w in words if w in list_token_embeddings])
                                 for words in text
                                 ])
-                                
+        
         paragraph_embedding = np.mean(np.array(list_token_embeddings))
         return paragraph_embedding
 
