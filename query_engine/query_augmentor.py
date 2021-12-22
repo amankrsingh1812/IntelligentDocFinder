@@ -16,12 +16,6 @@ class QueryEngine:
     """
     
     def __init__(self, top_k=10):
-        nltk.download('stopwords')
-        nltk.download('punkt')
-        nltk.download('averaged_perceptron_tagger')
-        nltk.download('maxent_treebank_pos_tagger')
-        nltk.download('wordnet')
-        nltk.download('omw-1.4')
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         
         # Contextual Augmentor

@@ -19,7 +19,7 @@ if __name__ == '__main__':
             
         elif operation == 2:                  # Perform query
             query = input('Enter query: ')
-            print("Searching for query", query, "--")
+            print("Searching for query", query)
             results = execute_query(query)
             print(results)
             
