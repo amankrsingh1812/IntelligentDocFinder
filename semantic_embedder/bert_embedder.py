@@ -2,8 +2,10 @@ from transformers import BertTokenizer, BertModel
 import pandas as pd
 import numpy as np
 import torch
+from collections import defaultdict
 
 from semantic_embedder.semantic_embedder_interface import SemanticEmbedderInterface
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 class BertEmbedder(SemanticEmbedderInterface):
     embedder = None
@@ -27,25 +29,38 @@ class BertEmbedder(SemanticEmbedderInterface):
         paragraph_embeddings = []
         
         for para in iter(file_iterator):
-            encoded_para = __encode_text(para)
+            encoded_para = self.__encode_text(para.split(" "))
             paragraph_embeddings.append(encoded_para)
             
         return paragraph_embeddings
     
     def get_query_embeddings(self, query: str) -> list:
         return self.__encode_text(query)
-    
-    def __encode_text(self, text: str) -> list:
-        tokenized_text, tokens_tensor, segments_tensors = self.__bert_text_preparation(text, tokenizer)
-        list_token_embeddings = self.__get_bert_embeddings(tokens_tensor, segments_tensors, model)
 
-        # Find the position 'bank' in list of tokens
-        word_index = tokenized_text.index('bank')
+    def __encode_text(self, text: str) -> list:
+        list_token_embeddings = [self.__get_word_embeddings(word) for word in text]
+        dim = len(list_token_embeddings)
+
+        vectorizer = TfidfVectorizer()
+        vectorizer.fit(text)
+        max_idf = max(vectorizer.idf_)
+
+        weights = defaultdict( lambda: max_idf, [(w, vectorizer.idf_[i]) 
+                                                for w, i in vectorizer.vocabulary_.items()])
+        paragraph_embedding = np.array([
+                                np.mean([list_token_embeddings[w] * weights[w]
+                                        for w in words if w in list_token_embeddings])
+                                for words in text
+                                ])
+                                
+        paragraph_embedding = np.mean(np.array(list_token_embeddings))
+        return paragraph_embedding
+
+    def __get_word_embeddings(self, text) -> list:
+        tokenized_text, tokens_tensor, segments_tensors = self.__bert_text_preparation(text)
+        list_token_embeddings = self.__get_bert_embeddings(tokens_tensor, segments_tensors)
         
-        # Get the embedding for bank
-        word_embedding = list_token_embeddings[word_index]
-        
-        return word_embedding
+        return list_token_embeddings
     
     def __get_bert_embeddings(self, tokens_tensor, segments_tensors):
         """Get embeddings from an embedding model
@@ -84,7 +99,7 @@ class BertEmbedder(SemanticEmbedderInterface):
 
         return list_token_embeddings
     
-    def __bert_text_preparation(text):
+    def __bert_text_preparation(self, text):
         """Preparing the input for BERT
 
         Takes a string argument and performs
