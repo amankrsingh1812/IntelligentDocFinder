@@ -4,6 +4,7 @@ from document_preprocessor.distributed_pipeline import *
 from database_access_object.lmdb_database_access_object import *
 from utils import Filetypes
 from document_preprocessor.accumulator import DocPreprocessingAccumulator
+from semantic_embedder.msmarco_embedder import MSMARCOEmbedder
 
 def insert_document(filepath: str, extension: Filetypes):
     # Create iterator for file
@@ -25,7 +26,7 @@ def insert_document(filepath: str, extension: Filetypes):
     
     # Compute sentence embeddings 
     # TODO
-    paragraphs_embeddings = BertEmbedder.get_embedder().get_paragraph_encodings(file_iterator = iterator)
+    paragraphs_embeddings = MSMARCOEmbedder.get_embedder().get_paragraph_encodings(file_iterator = iterator)
     # paragraphs_embeddings = []
     
     # Create tags for the file

@@ -29,7 +29,7 @@ class BertEmbedder(SemanticEmbedderInterface):
         paragraph_embeddings = []
         
         for para in iter(file_iterator):
-            encoded_para = self.__encode_text(para.split(" "))
+            encoded_para = self.__encode_text(para)
             paragraph_embeddings.append(encoded_para)
             
         return paragraph_embeddings
@@ -38,6 +38,7 @@ class BertEmbedder(SemanticEmbedderInterface):
         return self.__encode_text(query)
 
     def __encode_text(self, text: str) -> list:
+        text = text.split(" ")
         list_token_embeddings = [self.__get_word_embeddings(word) for word in text]
         dim = len(list_token_embeddings)
 
