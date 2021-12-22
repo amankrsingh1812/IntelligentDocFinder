@@ -19,7 +19,8 @@ def get_cosine_similarity_with_doc(doc_paragraph_embeddings: list, query_embeddi
 
 def get_docs_info(top_k_docs: list, query_embedding: list) -> list:
     dao = LMDBdao.get_dao()
-    
+    dao.open_session()
+
     docs_list = []
     for doc_id in top_k_docs:
         doc_attributes = dao.get_doc_attributes(doc_id)
@@ -33,5 +34,6 @@ def get_docs_info(top_k_docs: list, query_embedding: list) -> list:
         
     docs_list.sort(key = lambda x: -x[1]) 
     result_docs_list = [x[0] for x in docs_list]
+    dao.close_session()
     
     return result_docs_list

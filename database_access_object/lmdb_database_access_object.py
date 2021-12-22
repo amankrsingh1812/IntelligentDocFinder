@@ -6,7 +6,7 @@ class LMDBdao(DAOInterface):
     dao = None
     
     @staticmethod
-    def get_dao(lmdb_dir = '/workspace/doc-finder/lmdb_database/'):
+    def get_dao(lmdb_dir = '/workspaces/IntelligentDocFinder/lmdb_database/'):
         if LMDBdao.dao is None:
             LMDBdao.dao = LMDBdao(lmdb_dir)
         return LMDBdao.dao

@@ -25,7 +25,7 @@ def insert_document(filepath: str, extension: Filetypes):
     tf_map, num_tokens = preprocess_pipeline.run()
     
     # Compute sentence embeddings 
-    paragraphs_embeddings = MSMARCOEmbedder.get_embedder().get_paragraph_encodings(file_iterator = iterator)
+    paragraphs_embeddings = MSMARCOEmbedder.get_embedder().get_paragraph_embeddings(file_iterator = iterator)
     
     # Create tags for the file
     # TODO
@@ -35,7 +35,7 @@ def insert_document(filepath: str, extension: Filetypes):
     # TODO(low priority): manual tagging
     
     # Insert document into database
-    lmdbdao = LMDBdao.get_dao(BASE_DIR)
+    lmdbdao = LMDBdao.get_dao()
     lmdbdao.open_session(True)
     lmdbdao.add_document(filepath,
                          paragraphs_embeddings,

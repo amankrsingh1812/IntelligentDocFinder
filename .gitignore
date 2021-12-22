@@ -7,3 +7,4 @@ goorm.manifest
 playground/
 tests/lmdb_*
 virtualenv/
+lmdb_database/

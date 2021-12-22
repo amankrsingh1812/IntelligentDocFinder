@@ -5,7 +5,7 @@ import os
 
 if __name__ == '__main__':
     while 1:
-        os.system('clear')
+        # os.system('clear')
         print('Enter number for operation:')
         print('[1] Add document to Intelligent Doc Finder')
         print('[2] Find relevant document with your query')
@@ -13,12 +13,13 @@ if __name__ == '__main__':
         operation = int(input())
         
         if operation == 1:                    # Add document
-            file_path = input('Enter file path')
-            extension = input('Enter file type')
+            file_path = input('Enter file path: ')
+            extension = input('Enter file type: ')
             insert_document(file_path, extension)
             
         elif operation == 2:                  # Perform query
-            query = input('Enter query')
+            query = input('Enter query: ')
+            print("Searching for query", query, "--")
             results = execute_query(query)
             print(results)
             

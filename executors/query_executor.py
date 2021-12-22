@@ -9,6 +9,8 @@ def execute_query(query: str) -> list:
     query_engine = QueryEngine()
     preprocessed_tokens = query_engine.get_processed_augmented_tokens(query)
 
+    print(preprocessed_tokens)
+    
     bm25_doc_ranker = BM25DocRanker(preprocessed_tokens)
     top_k_docs = bm25_doc_ranker.get_top_doc_ids(k=2)
 

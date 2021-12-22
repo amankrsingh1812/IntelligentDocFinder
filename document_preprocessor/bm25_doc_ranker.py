@@ -5,11 +5,11 @@ class BM25DocRanker:
     k1 = 1.64
     b = 0.75
     
-    def __init__(self, query_tokens: set, lmdb_dir = '/workspace/doc-finder/lmdb_database/'):
+    def __init__(self, query_tokens: set, lmdb_dir = '/workspaces/IntelligentDocFinder/lmdb_database/'):
         self.query_tokens = query_tokens
         
         self.dao = LMDBdao.get_dao(lmdb_dir)
-        self.dao.open_session();
+        self.dao.open_session()
         
         self.doc_list = self.dao.get_doc_list()
         self.avg_doc_len = 0
