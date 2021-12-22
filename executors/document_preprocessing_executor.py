@@ -25,8 +25,8 @@ def insert_document(filepath: str, extension: Filetypes):
     
     # Compute sentence embeddings 
     # TODO
-    # paragraphs_embeddings = create_para_embeddings(file_iterator = iterator)
-    paragraphs_embeddings = []
+    paragraphs_embeddings = BertEmbedder.get_embedder().get_paragraph_encodings(file_iterator = iterator)
+    # paragraphs_embeddings = []
     
     # Create tags for the file
     # TODO
