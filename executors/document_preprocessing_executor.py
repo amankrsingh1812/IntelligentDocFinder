@@ -26,10 +26,12 @@ def insert_document(filepath: str, extension: Filetypes):
     # Compute sentence embeddings 
     # TODO
     # paragraphs_embeddings = create_para_embeddings(file_iterator = iterator)
+    paragraphs_embeddings = []
     
     # Create tags for the file
     # TODO
     # tags = create_tags(file_iterator = iterator)
+    tags = []
 
     # TODO(low priority): manual tagging
     
