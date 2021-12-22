@@ -6,3 +6,4 @@ dist/
 goorm.manifest
 playground/
 tests/lmdb_*
+virtualenv/

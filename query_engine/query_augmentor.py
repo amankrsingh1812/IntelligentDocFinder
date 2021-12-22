@@ -21,6 +21,7 @@ class QueryEngine:
         nltk.download('averaged_perceptron_tagger')
         nltk.download('maxent_treebank_pos_tagger')
         nltk.download('wordnet')
+        nltk.download('omw-1.4')
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         
         # Contextual Augmentor
@@ -40,7 +41,7 @@ class QueryEngine:
     def __get_pos_tags(self, words: list) -> list:
         return self.treebank_tagger.tag(words)
     
-    def __get_tokenized_augumented_query(self, query: str) -> list:
+    def __get_tokenized_augmented_query(self, query: str) -> list:
         # Tokenize the query
         tokenized_query = nltk.word_tokenize(query)
         query = " ".join(tokenized_query)
@@ -48,16 +49,16 @@ class QueryEngine:
         # Restrict the replacement of proper nouns while augmenting
         restricted_positions = []
         for i, (word, tag) in enumerate(self.__get_pos_tags(tokenized_query)):
-            print(word,tag)
+            # print(word,tag)
             if tag == 'NNP':
                 restricted_positions.append(i)
 
         # Keep all augmented sentences together
         tokenized_augmented_query = [tokenized_query]
-        augmented_sentences = aug_word.augment(query, n=len(tokenized_query)//5+3)
+        augmented_sentences = self.aug_word.augment(query, n=len(tokenized_query)//5+3)
         
         for aug_sent in augmented_sentences:
-            print(aug_sent)
+            # print(aug_sent)
             tokenized_aug_sent = nltk.word_tokenize(aug_sent)
             tokenized_aug_sent = [ tokenized_query[i]
                                       if i in restricted_positions else tokenized_aug_sent[i] 
@@ -70,11 +71,12 @@ class QueryEngine:
         lemmatized_tokens = lemmatizer_and_lowertext(tokens)
         punctuation_free_tokens = remove_punctuation(lemmatized_tokens)
         stopwords_free_tokens = remove_stopwords(punctuation_free_tokens)
-        cleaned_tokens = stemm_text(stopword_free_tokens)
+        cleaned_tokens = stemm_text(stopwords_free_tokens)
         
         final_set = set()
         for token in cleaned_tokens:
-            final_set.add(token)    
+            if token.isnumeric() == False:      # Remove numbers
+                final_set.add(token)    
         
         return final_set
     
