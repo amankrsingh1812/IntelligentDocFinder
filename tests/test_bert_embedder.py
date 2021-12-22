@@ -9,11 +9,6 @@ def test_get_paragraph_embeddings(file_iterator):
     paragraph_embeddings = bert_embedder.get_paragraph_embeddings(file_iterator)
     print("[Paragraph]: ", np.shape(paragraph_embeddings))
 
-def get_cosine_sim(a,b):
-    a = np.array(a)
-    b = np.array(b)
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-
 def test_get_query_embeddings(query):
     bert_embedder = BertEmbedder.get_embedder()
     query_embeddings = bert_embedder.get_query_embeddings(query)
@@ -24,9 +19,9 @@ if __name__ == '__main__':
     e2 = test_get_query_embeddings('modern humans arrived on this indian continent from africa perhaps later that 1 years bp.')
     e3 = test_get_query_embeddings('islamic islam migrated around eastern indian subcontinent from africa no later than 1 years before.')
 
-    print(get_cosine_sim(e1, e2))
-    print(get_cosine_sim(e2, e3))
-    print(get_cosine_sim(e3, e1))
+    print(calculate_cosine_similarity(e1, e2))
+    print(calculate_cosine_similarity(e2, e3))
+    print(calculate_cosine_similarity(e3, e1))
     
     # iterator = IteratorFactory.get_iterator(generate_filename("txt"), "txt")
     # test_get_paragraph_embeddings(iterator)

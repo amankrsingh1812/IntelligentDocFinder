@@ -1,19 +1,11 @@
-from numpy import dot
-import numpy
-from numpy.linalg import norm
 from database_access_object.lmdb_database_access_object import *
-
-
-def get_cosine_sim(a,b):
-    a = numpy.array(a)
-    b = numpy.array(b)
-    return dot(a, b)/(norm(a)*norm(b))
+from utils import calculate_cosine_similarity
 
 
 def get_cosine_similarity_with_doc(doc_paragraph_embeddings: list, query_embedding: list) -> float:
     csim  = -1
     for para_embedd in doc_paragraph_embeddings:
-        csim = max(csim, get_cosine_sim(para_embedd, query_embedding))
+        csim = max(csim, calculate_cosine_similarity(para_embedd, query_embedding))
     return csim
         
 

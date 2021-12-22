@@ -1,4 +1,7 @@
 from enum import Enum     
+import numpy as np
+
+Filetypes = Enum('File','txt pdf docx pptx')
 
 def generate_filename(extension):
     """ 
@@ -9,4 +12,7 @@ def generate_filename(extension):
     """
     return f'samples/sample_{extension}.{extension}'
 
-Filetypes = Enum('File','txt pdf docx pptx')
+def calculate_cosine_similarity(a, b) -> float:
+    a = np.array(a)
+    b = np.array(b)
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
