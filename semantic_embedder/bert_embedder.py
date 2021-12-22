@@ -23,16 +23,16 @@ class BertEmbedder(SemanticEmbedderInterface):
         # Set up the tokenizer
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     
-    def get_paragraph_encodings(self, file_iterator) -> list:
-        paragraph_encodings = []
+    def get_paragraph_embeddings(self, file_iterator) -> list:
+        paragraph_embeddings = []
         
         for para in iter(file_iterator):
             encoded_para = __encode_text(para)
-            paragraph_encodings.append(encoded_para)
+            paragraph_embeddings.append(encoded_para)
             
-        return paragraph_encodings
+        return paragraph_embeddings
     
-    def get_query_encoding(self, query: str) -> list:
+    def get_query_embeddings(self, query: str) -> list:
         return self.__encode_text(query)
     
     def __encode_text(self, text: str) -> list:
