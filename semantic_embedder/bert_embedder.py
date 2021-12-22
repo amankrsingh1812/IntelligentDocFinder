@@ -38,23 +38,23 @@ class BertEmbedder(SemanticEmbedderInterface):
         return self.__encode_text(query)
 
     def __encode_text(self, text: str) -> list:
-        text = text.split(" ")
-        list_token_embeddings = [self.__get_word_embeddings(word) for word in text]
-        dim = len(list_token_embeddings)
+        list_token_embeddings = self.__get_word_embeddings(text)
 
-        vectorizer = TfidfVectorizer()
-        vectorizer.fit(text)
-        max_idf = max(vectorizer.idf_)
+        # dim = len(list_token_embeddings)
 
-        weights = defaultdict( lambda: max_idf, [(w, vectorizer.idf_[i]) 
-                                                for w, i in vectorizer.vocabulary_.items()])
-        paragraph_embedding = np.array([
-                                np.mean([list_token_embeddings[w] * weights[w]
-                                        for w in words if w in list_token_embeddings])
-                                for words in text
-                                ])
+        # vectorizer = TfidfVectorizer()
+        # vectorizer.fit(text.split(" "))
+        # max_idf = max(vectorizer.idf_)
+
+        # weights = defaultdict( lambda: max_idf, [(w, vectorizer.idf_[i]) 
+        #                                         for w, i in vectorizer.vocabulary_.items()])
+        # paragraph_embedding = np.array([
+        #                         np.mean([list_token_embeddings[w] * weights[w]
+        #                                 for w in words if w in list_token_embeddings])
+        #                         for words in text.split(" ")
+        #                         ])
         
-        paragraph_embedding = np.mean(np.array(list_token_embeddings))
+        paragraph_embedding = np.mean(np.asarray(list_token_embeddings), axis=0)
         return paragraph_embedding
 
     def __get_word_embeddings(self, text) -> list:
@@ -71,8 +71,6 @@ class BertEmbedder(SemanticEmbedderInterface):
                                      with token ids for each token in text
             segments_tensors (obj) : Torch tensor size [n_tokens]
                                      with segment ids for each token in text
-            model (obj)            : Embedding model to generate embeddings
-                                     from token and segment ids
 
         Returns:
             list: List of list of floats of size
