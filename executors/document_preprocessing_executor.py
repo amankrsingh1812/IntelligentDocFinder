@@ -7,7 +7,7 @@ from document_preprocessor.accumulator import DocPreprocessingAccumulator
 from semantic_embedder.msmarco_embedder import MSMARCOEmbedder
 from document_preprocessor.tag_assigner import assign_tags
 
-def insert_document(filepath: str, extension: Filetypes):
+def insert_document(filepath: str, extension: str):
     # Create iterator for file
     iterator = IteratorFactory.get_iterator(filepath, extension)
     doc_preprocessing_accumulator = DocPreprocessingAccumulator()

@@ -7,10 +7,6 @@ import pickle
 import json
 
 
-if __name__ == '__main__':
-    main()
-
-
 def write_in_memory(buf, data):
     buf[:len(data)] = data
     
@@ -32,7 +28,7 @@ def handle_request(request_type, request_parameters):
 
 
 def main():
-    message_queue = posixmq.Queue('/doc-phi-listener-queue', maxmsgsize=100)
+    message_queue = posixmq.Queue('/doc-phi-listener-queue', maxmsgsize=8192)
     while (1):
         try:
             if message_queue.qsize():
@@ -48,7 +44,9 @@ def main():
                 response = pickle.dumps(response)
                 
                 shm_client = shared_memory.SharedMemory(name='shm_'+str(pid), create=False)
-                write_in_memory(shm_client.buf, var)
+                
+                write_in_memory(shm_client.buf, response)
+                
                 shm_client.close()
 
                 print('responded and waking client')
@@ -56,12 +54,14 @@ def main():
                 # time.sleep(5)
         except:
             message_queue.close()
+            shm_client.close()
             posixmq.unlink('/doc-phi-listener-queue')
             print('MQ deleted')
             sys.exit()
             
             
-            
+if __name__ == '__main__':
+    main()
             
             
 """
