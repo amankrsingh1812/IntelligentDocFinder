@@ -1,31 +1,69 @@
 from executors.document_preprocessing_executor import insert_document
 from executors.query_executor import execute_query
-import os
+from ipcqueue import posixmq
+import sys, time, signal, os
+from multiprocessing import shared_memory
+import pickle
+import json
 
 
 if __name__ == '__main__':
-    while 1:
-        # os.system('clear')
-        print('Enter number for operation:')
-        print('[1] Add document to Intelligent Doc Finder')
-        print('[2] Find relevant document with your query')
-        print('[0] Exit application')
-        operation = int(input())
+    main()
+
+
+def write_in_memory(buf, data):
+    buf[:len(data)] = data
+    
+
+def handle_request(request_type, request_parameters):
+    response = None
+    
+    if request_type == 1:
+        insert_document(request_parameters['path'], request_parameters['extension'])
+        response = "200"
         
-        if operation == 1:                    # Add document
-            file_path = input('Enter file path: ')
-            extension = input('Enter file type: ')
-            insert_document(file_path, extension)
+    elif request_type == 2:
+        response = execute_query(request_parameters['query'])
+        
+    else:
+        response = "200"
+    
+    return response
+
+
+def main():
+    message_queue = posixmq.Queue('/doc-phi-listener-queue', maxmsgsize=100)
+    while (1):
+        try:
+            if message_queue.qsize():
+                
+                request = message_queue.get()
+
+                # Get request and pid for shared memory
+                (request_type, request_parameters, pid) = request
+                print('Type of request:\n', request_type)
+                print('Client PID:', pid)
+
+                response = handle_request(request_type, request_parameters)
+                response = pickle.dumps(response)
+                
+                shm_client = shared_memory.SharedMemory(name='shm_'+str(pid), create=False)
+                write_in_memory(shm_client.buf, var)
+                shm_client.close()
+
+                print('responded and waking client')
+                os.kill(pid, signal.SIGCONT)
+                # time.sleep(5)
+        except:
+            message_queue.close()
+            posixmq.unlink('/doc-phi-listener-queue')
+            print('MQ deleted')
+            sys.exit()
             
-        elif operation == 2:                  # Perform query
-            query = input('Enter query: ')
-            print("Searching for query", query)
-            results = execute_query(query)
-            print(results)
             
-        else:
-            break
-             
+            
+            
+            
 """
 TODOs 
 
