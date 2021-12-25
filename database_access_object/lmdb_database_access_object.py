@@ -63,7 +63,7 @@ class LMDBdao(DAOInterface):
                          db=self.db_map['nq'])
             
         
-    def add_document(self, file_path: str, paragraphs_embeddings: list, 
+    def add_document(self, file_name: str, file_path: str, paragraphs_embeddings: list, 
                      tags: list, num_tokens: int, tf_map: dict) -> str:
         self.__check_requirements()
         doc_id = str(uuid.uuid4())
@@ -79,6 +79,7 @@ class LMDBdao(DAOInterface):
         
         # Update remaining data related to document
         doc_attributes = {
+            'file_name': file_name,
             'file_path': file_path,
             'tags': tags,
             'num_tokens': num_tokens,
@@ -149,3 +150,13 @@ class LMDBdao(DAOInterface):
     def __get_nq_token(self, token: str) -> int:
         nq_value = self.txn.get(token.encode('ascii'), db=self.db_map['nq'], default=0)
         return nq_value if nq_value == 0 else pickle.loads(nq_value)
+
+
+    def get_tags(self, file_name: str) -> list:
+        for key, doc_attributes in self.txn.cursor(db=self.db_map['doc']):
+            loaded_doc_attributes = pickle.loads(doc_attributes)
+
+            if file_name == loaded_doc_attributes['file_name']:
+                return loaded_doc_attributes['tags']
+        
+        return []

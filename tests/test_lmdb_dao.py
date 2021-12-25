@@ -79,11 +79,12 @@ class LMDBdaoTest(unittest.TestCase):
             'goodbye': 3,
             'black': 1
         }
-        doc_id = self.lmdbdao.add_document(doc_store_entry['file_path'],
-                                  doc_store_entry['paragraphs_embeddings'], 
-                                  doc_store_entry['tags'], 
-                                  doc_store_entry['num_tokens'], 
-                                  tf_map)
+        doc_id = self.lmdbdao.add_document( doc_store_entry['file_name'],
+                                            doc_store_entry['file_path'],
+                                            doc_store_entry['paragraphs_embeddings'], 
+                                            doc_store_entry['tags'], 
+                                            doc_store_entry['num_tokens'], 
+                                            tf_map)
         
         # Close and then open the session to commit the transactions
         self.lmdbdao.close_session()

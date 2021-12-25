@@ -2,6 +2,7 @@ from query_engine.query_augmentor import QueryEngine
 from document_preprocessor.bm25_doc_ranker import BM25DocRanker
 from semantic_embedder.msmarco_embedder import MSMARCOEmbedder
 from query_engine.semantic_sorter import get_docs_info
+from database_access_object.lmdb_database_access_object import *
 
 def execute_query(query: str) -> list:
     
@@ -21,3 +22,12 @@ def execute_query(query: str) -> list:
     result_docs_list = get_docs_info(top_k_docs, query_embeddings)
     
     return result_docs_list
+
+
+def execute_query_for_tags(file_name: str) -> list:
+    lmdbdao = LMDBdao.get_dao()
+    lmdbdao.open_session()
+    tags = lmdbdao.get_tags(file_name)
+    lmdbdao.close_session()
+
+    return tags

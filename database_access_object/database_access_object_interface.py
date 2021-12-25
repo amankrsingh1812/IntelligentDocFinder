@@ -5,7 +5,7 @@ class DAOInterface:
     def end_session(self):
         pass
     
-    def add_document(self, file_path: str, paragraphs_embeddings: list, tokens: list) -> str:
+    def add_document(self, file_name: str, file_path: str, paragraphs_embeddings: list, tokens: list) -> str:
         pass
     
     def delete_document(self, doc_id: str) -> bool:

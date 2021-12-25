@@ -39,9 +39,9 @@ def main():
 
 @main.command()
 def add():
+    name = click.prompt(click.style('[?] Name', fg='blue'), type=str)
     path = click.prompt(click.style('[?] Path', fg='blue'), type=str)
     extension = click.prompt(click.style('[?] Type (txt/html/docx/pptx)', fg='blue'), type=str)
-    name = click.prompt(click.style('[?] Name', fg='blue'), type=str)
     tags = []
     
     if click.confirm(click.style('[Q] Do you want to add tags?', fg='yellow')):
@@ -79,14 +79,17 @@ def search(query):
     spinner.stop()
 
     click.secho('[✓]: Search Results -', fg='green')  
-    click.echo(response)
+    for idx, val in enumerate(response):
+        click.echo('\n')
+        click.echo(str(idx + 1) + '. File Name - ' + val['file_name'])
+        click.echo('\tTags - ' + ', '.join(str(x) for x in val['tags']))
     
     
 @main.command()
 @click.option('--file', '-f', help='Name of the file')
 def tags(file):
     parameters = {
-        'filename': file
+        'name': file
     }
     
     spinner = Halo(text='Retrieving tags...', text_color='yellow', spinner='dots')
@@ -94,10 +97,15 @@ def tags(file):
     spinner.start()
     response = execute_command(3, parameters)
     spinner.stop()
-        
-    click.secho('[✓]: Assigned tags -', fg='green') 
-    click.echo(file)
 
+    click.echo('\n')
+    if len(response) == 0:
+        click.secho('[I]: No tags assigned to this file', fg='yellow')
+    else:    
+        click.secho('[✓]: Assigned tags -', fg='green') 
+        click.echo(', '.join(str(x) for x in response))
+    click.echo('\n')
+    
     
 if __name__ == "__main__":
     main()

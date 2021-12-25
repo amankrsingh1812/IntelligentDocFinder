@@ -1,5 +1,5 @@
 from executors.document_preprocessing_executor import insert_document
-from executors.query_executor import execute_query
+from executors.query_executor import *
 from ipcqueue import posixmq
 import sys, time, signal, os
 from multiprocessing import shared_memory
@@ -11,19 +11,21 @@ def write_in_memory(buf, data):
     buf[:len(data)] = data
     
 
-def handle_request(request_type, request_parameters):
+def handle_request(request_type, params):
     response = None
     
     if request_type == 1:
-        insert_document(request_parameters['path'], request_parameters['extension'])
+        insert_document(params['name'], params['path'], params['extension'], params['tags'])
         response = "200"
         
     elif request_type == 2:
-        response = execute_query(request_parameters['query'])
+        response = execute_query(params['query'])
         
     else:
-        response = "200"
-    
+        print('Query executed')
+        response = execute_query_for_tags(params['name'])
+        print('Query completed')
+
     return response
 
 

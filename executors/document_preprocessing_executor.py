@@ -7,9 +7,9 @@ from document_preprocessor.accumulator import DocPreprocessingAccumulator
 from semantic_embedder.msmarco_embedder import MSMARCOEmbedder
 from document_preprocessor.tag_assigner import assign_tags
 
-def insert_document(filepath: str, extension: str):
+def insert_document(file_name: str, file_path: str, extension: str, manual_tags: list):
     # Create iterator for file
-    iterator = IteratorFactory.get_iterator(filepath, extension)
+    iterator = IteratorFactory.get_iterator(file_path, extension)
     doc_preprocessing_accumulator = DocPreprocessingAccumulator()
 
     # Compute tf mapping for file
@@ -31,12 +31,14 @@ def insert_document(filepath: str, extension: str):
     # Create tags for the file
     tags = assign_tags(doc_paragraphs_embeddings)
 
-    # TODO(low priority): manual tagging
-    
+    # Manual tagging
+    tags.extend(manual_tags)
+
     # Insert document into database
     lmdbdao = LMDBdao.get_dao()
     lmdbdao.open_session(True)
-    lmdbdao.add_document(filepath,
+    lmdbdao.add_document(file_name,
+                         file_path,
                          doc_paragraphs_embeddings,
                          tags,
                          num_tokens,

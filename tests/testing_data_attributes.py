@@ -32,24 +32,28 @@ class TestingData:
 
     doc_store = {
         'doc_id_1': {
+            'file_name': 'File 1',
             'file_path': DB_DIR + 'doc1',
             'tags': ['color', 'greetings'],
             'num_tokens': 6,
             'paragraphs_embeddings': paragraphs_embeddings[0]
         },
         'doc_id_2': {
+            'file_name': 'File 2',
             'file_path': DB_DIR + 'doc2',
             'tags': ['animal', 'color', 'greetings'],
             'num_tokens': 4,
             'paragraphs_embeddings': paragraphs_embeddings[1]
         },
         'doc_id_3': {
+            'file_name': 'File 3',
             'file_path': DB_DIR + 'doc3',
             'tags': ['science'],
             'num_tokens': 5,
             'paragraphs_embeddings': paragraphs_embeddings[2]
         },
         'doc_id_4': {
+            'file_name': 'File 4',
             'file_path': DB_DIR + 'doc4',
             'tags': ['politics'],
             'num_tokens': 5,
