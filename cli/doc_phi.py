@@ -37,7 +37,7 @@ def main():
     click.secho(f.renderText('doc-phi'), fg='green')
     
 
-@main.command()
+@main.command(help='Add files to the database')
 def add():
     name = click.prompt(click.style('[?] Name', fg='blue'), type=str)
     path = click.prompt(click.style('[?] Path', fg='blue'), type=str)
@@ -56,7 +56,7 @@ def add():
         'tags': tags
     }
     
-    spinner = Halo(text='Adding file to the database', spinner='dots')
+    spinner = Halo(text='Adding file to the database', text_color='yellow', spinner='dots')
     
     spinner.start()
     response = execute_command(1, parameters)
@@ -65,7 +65,7 @@ def add():
     click.secho('[✓]: Added file', fg='green') 
     
     
-@main.command()
+@main.command(help='Search files using suitable query')
 @click.option('--query', '-q', help='Search query')
 def search(query):
     parameters = {
@@ -85,7 +85,7 @@ def search(query):
         click.echo('\tTags - ' + ', '.join(str(x) for x in val['tags']))
     
     
-@main.command()
+@main.command(help='Retrieve allotted tags for a file')
 @click.option('--file', '-f', help='Name of the file')
 def tags(file):
     parameters = {
