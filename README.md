@@ -77,29 +77,56 @@ Doc-phi uses **LMDB** (Lightning Memory-Mapped Database) as its database. LMDB i
 More about lmdb can be found at its [official documentation](https://lmdb.readthedocs.io/en/release/#).
 
 #### Schema
-[schema](docs/img/uml.jpg)
+![schema](docs/img/uml.jpg)
 
 More about these data stores is as follows:
 
-**a. document**  
-It contains the details about the documents that are added to the Doc-phi. The documents are identified by a unique identifier [uuid](https://docs.python.org/3/library/uuid.html). The values contain the attribute and its details in the form of dictionary.
+<ol type='a'>
+  <li> <b>document</b><br>
+  It contains the details about the documents that are added to the Doc-phi. The documents are identified by a unique identifier <a href="https://docs.python.org/3/library/uuid.html">uuid</a>. The values contain the attribute and its details in the form of dictionary.
+  
+  <br>
+  <li> <b>tf</b><br>
+  tf stands for the term-frequency and has its reference from the <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2">tf-idf</a>. The tf store contains the frequency of each of the tokens present in all the documents. The key for the tf store is obtained by concatenating the document id with the token itself (as string).
 
-**b. tf**  
-tf stands for the term-frequency and has its reference from the [tf-idf](https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2). The tf store contains the frequency of each of the tokens present in all the documents. The key for the tf store is obtained by concatenating the document id with the token itself (as string).
+  <br>
+  <li> <b>nq</b><br>
+  The nq store keeps the track of the documents in which the token has appeared (at least once). It has its significance in the <a href="https://en.m.wikipedia.org/wiki/Okapi_BM25">Okapi BM25</a>. 
 
-**c. nq**  
-The nq store keeps the track of the documents in which the token has appeared (at least once). It has its significance in the [Okapi BM25](https://en.m.wikipedia.org/wiki/Okapi_BM25).  
-
-**d. tokens**  
-This data store tracks the list of tokens present in each document. The key is constituted by the document_id. 
+  <br>
+  <li> <b>token</b><br>
+  This data store tracks the list of tokens present in each document. The key is constituted by the document_id. 
+</ol>
+ 
 
 #### Data Access Object (DAO)
 Doc-phi utilises DAO as an interface which provides the data operations without exposing the details of the database. As a result, there is no tight coupling between the database and the application logic, and a different database can be used without affecting the main application. 
 
 
 ### 3. Query Processing
+Doc-phi takes query in the form of natural language and returns a list of most relevant documents. This entire functionality is handled by the ```QueryEngine``` class and ```SemanticEmbedder``` module. The series of operations can be broken down into following functional unites:
 
-To be completed...
+<ol type='a' >
+  <li> <b>Non-pipelined processing</b><br>
+  The queries are first processed to convert it in the tokens. The process executes in a non-pipelined fashion since the size of queries won't be too large to be executed efficiently by the pipeline. The processing steps are similar to that of the <i>distributed pipeline</i> that we discussed before.
+
+  <br>
+  <li> <b>Query Augmentation</b><br>
+  The list of tokens retrieved after processing the query undergo an augmentation step. This step improves the search results by adding a variety of semantically similar tokens to the search space of the query. The augmentation process is carried out using the <a href="https://nlpaug.readthedocs.io/en/latest/"> nlapaug </a> module.
+
+  <br>
+  <b><li> <b>2-level filtering</b></br></b>
+  <ol type='i'>
+  <li> <b>Ranking Function</b><br>
+  In the 1st level of filtering, <b>Okapi BM25</b> ranking function is used to select top k documents from the search space. Okapi BM25 makes use of the tf-idf on the <i>augmented query tokens</i> to filter out the documents using these query tokens. More details on the ranking function can be found on this <a href="https://en.m.wikipedia.org/wiki/Okapi_BM25"> wikipedia page</a>.
+
+  <br>
+  <li> <b>Sentence Embeddings</b><br>
+  Sentence embeddings are used to refine and fine-tune the search space by taking into account the semantic meaning of the queries. The ranking function doesn't take into the account the semantic proximity between the tokens and the documents. <br> Sentence embeddings can be calculated using 2 different methods - (i) MSMARCO Models, and (ii) BERT Models. <br>In our implementation, MSMARCO is expected to perform better than the BERT models since MSMARCO directly utilises transformers to calculate the sentence level embeddings. On the other hand for BERT model, first the word embeddings are found out which are then combined to form the sentence embeddings using suitable weights. More details on MSMARCO models can be found <a href="https://www.sbert.net/docs/pretrained-models/msmarco-v3.html"> here</a>. <br>
+
+  On obtaining the sentence embeddings for the query, the cosine similarity is found between the documents obtained after level-1 filtering and the query. Thereafter the resultant documents are displayed in descending order of their relevance.
+  </ol>
+</ol>
 
 ### 4. Command Line Interface
 
