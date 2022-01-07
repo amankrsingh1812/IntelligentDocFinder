@@ -47,7 +47,7 @@ Most relevant documents can be queried upon using the following command:
 doc-phi search -q <query>
 ```
 
-The results will be displayed in the sorted order based on the rank of the document calculated using **Okapi BM25** ranking function.
+The results will be displayed in the sorted order based on the rank of the document calculated using [Okapi BM25](https://en.m.wikipedia.org/wiki/Okapi_BM25) ranking function.
 
 ### 3. Listing of the Tags
 The tags, both manual and automatic, assigned to a document can be viewed using the following command:
@@ -68,10 +68,34 @@ To be completed...
 Include descriptions of the various models/techniques used
 
 ### 2. Database Management System
+Doc-phi uses **LMDB** (Lightning Memory-Mapped Database) as its database. LMDB is a key-value pair database whose following functionalities motivated its use:
 
-To be completed...
+* Read transactions are extremely cheap.  
+* Memory mapped, allowing for zero copy lookup and iteration.  
+* No application-level caching is required: LMDB fully exploits the operating system’s buffer cache.
 
-Include schemas/relations
+More about lmdb can be found at its [official documentation](https://lmdb.readthedocs.io/en/release/#).
+
+#### Schema
+[schema](docs/img/uml.jpg)
+
+More about these data stores is as follows:
+
+**a. document**  
+It contains the details about the documents that are added to the Doc-phi. The documents are identified by a unique identifier [uuid](https://docs.python.org/3/library/uuid.html). The values contain the attribute and its details in the form of dictionary.
+
+**b. tf**  
+tf stands for the term-frequency and has its reference from the [tf-idf](https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2). The tf store contains the frequency of each of the tokens present in all the documents. The key for the tf store is obtained by concatenating the document id with the token itself (as string).
+
+**c. nq**  
+The nq store keeps the track of the documents in which the token has appeared (at least once). It has its significance in the [Okapi BM25](https://en.m.wikipedia.org/wiki/Okapi_BM25).  
+
+**d. tokens**  
+This data store tracks the list of tokens present in each document. The key is constituted by the document_id. 
+
+#### Data Access Object (DAO)
+Doc-phi utilises DAO as an interface which provides the data operations without exposing the details of the database. As a result, there is no tight coupling between the database and the application logic, and a different database can be used without affecting the main application. 
+
 
 ### 3. Query Processing
 
