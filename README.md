@@ -15,6 +15,7 @@ The application consists of a backend daemon service and a command line interfac
 
 
 ## Usage
+
 The command line interface for the doc-phi can be used as:
 
 ```
@@ -32,6 +33,7 @@ Commands:
 Currently following operations can be performed:
 
 ### 1. Adding Documents
+
 Various types of the documents can be added using the following syntax:
 
 ```
@@ -41,6 +43,7 @@ doc-phi add
 After executing this command, various details pertaining to the document can be added using interactive interface.
 
 ### 2. Querying based on Natural Language
+
 Most relevant documents can be queried upon using the following command:
 
 ```
@@ -50,11 +53,13 @@ doc-phi search -q <query>
 The results will be displayed in the sorted order based on the rank of the document calculated using [Okapi BM25](https://en.m.wikipedia.org/wiki/Okapi_BM25) ranking function.
 
 ### 3. Listing of the Tags
+
 The tags, both manual and automatic, assigned to a document can be viewed using the following command:
 
 ```
 doc-phi tags -f <file_name>
 ```
+
 ## How Doc-Phi works
 
 The querying backend for Doc-Phi is an amalgamation of conventional ranking algorithm, BM25, based on TF-IDF and contextual sentence level BERT model, MSMARCO. All neural models are implemented on the PyTorch backend. The indexes and documents' metadata is stored using the Lightening Memory-Mapped Database (LMDB). An ontology derived from the union of FIGER and TypeNet ontologies is used by Doc-Phi to automatically assign tags from a generic knowledge space.
@@ -63,11 +68,56 @@ The following sections describe the details of various components of the applica
 
 ### 1. Document Processing
 
-To be completed...
+The core functionality of Doc-Phi is to efficiently process documents associated with the software to enable quick and efficient semantic document retrieval. The processing, as discussed above includes
 
-Include descriptions of the various models/techniques used
+<ol type='i'>
+<li> word frequency based statistics used for filtering relevant documents
+<li> neural transformer-based processing of paragraphs for contextual similarity matching
+</ol>
+
+
+
+Along with the processing required for querying, documents are also assigned tags which can are shown while querying. These tags are also assigned in this component.
+
+This processing is achieved by the following logical steps:
+
+#### a. Paragraphs Extractor
+
+The processing operations within each document are performed at the granularity of a paragraph. Paragraphs extractor module lays out the interface and implements classes capable of reading documents and returning iterators over the paragraphs for various file types.
+
+The module is thread safe, so as to be used along with our distributed pipeline. A factory for iterators is also provided.
+
+#### b. Distributed Pipeline
+
+All paragraphs go through various stages of transformations so that they can be used for filtering relevant documents during the first phase of querying. This involves natural language processing methods like *tokenizing, lemmatizing, removing stopwords and punctuations and stemming words*. 
+
+This phase is implemented using a distributed multithreaded pipeline which, in essence, allows various portions of a document to be at different stages of the transformation at the same time while taking advantage of multiple cores of the machine. Each stage is allowed to have multiple workers. 
+
+The pipeline uses iterators of a paragraphs extractor, a list of the various processing functions and an accumulator function providing a flexible use case. 
+
+#### c. TF-IDF
+
+TF-IDF stands for “Term Frequency — Inverse Document Frequency”, a technique to quantify words in a set of documents. A score is computed for each word to signify its importance in the document and corpus. 
+
+Term Frequency, for a given word tells how many times it occurs in a particular document. Inverse Document Frequency measures the informativeness of a word. Given the words from a query, TF and TDF can together be used to find relevant documents. This was how search engines worked until a few years ago. However, we using this (with the BM25 algorithm) only to filter relevant documents.
+
+#### d. Embeddings for Documents
+
+For documents filtered out by BM25, Doc-Phi ranks the documents in order of relevance to the user query. This makes use of the sentence level BERT models which can encode paragraphs into real vectors. This can be achieved in either of the two ways:
+
+- While processing a document, Doc-Phi (by default) uses [MSMARCO](https://www.sbert.net/docs/pretrained-models/msmarco-v3.html) to find and store embeddings for every paragraph in that document.
+- By using the contextual word embeddings from BERT models and taking a weighted sum based on some parameter to aggregate them into sentence embeddings
+
+**Note:** The choice of sticking to the paragraph level granularity is based on the heuristic that a paragraph talks about primarily one point at once. Document level embeddings on the hand, talk about the 'big picture' in general, while the sentence level embedding which are more informative would result in much higher storage and significant increase in search time while querying.
+
+#### e. Tag Assignment
+
+Although the CLI allows assigning manual tags for a document, the real power of Doc-Phi is automatic assignment of tags to documents. This is achieved by using the paragraph embeddings computed in the above step and finding the cosine similarity with the embeddings from a predefined set of tags.
+
+We have defined our own ontology (tag set) for this purpose which is derived from the *FIGER* and the *TypeNet* knowledge hierarchies used for entity classification purposes.
 
 ### 2. Database Management System
+
 Doc-phi uses **LMDB** (Lightning Memory-Mapped Database) as its database. LMDB is a key-value pair database whose following functionalities motivated its use:
 
 * Read transactions are extremely cheap.  
@@ -77,6 +127,7 @@ Doc-phi uses **LMDB** (Lightning Memory-Mapped Database) as its database. LMDB i
 More about lmdb can be found at its [official documentation](https://lmdb.readthedocs.io/en/release/#).
 
 #### Schema
+
 ![schema](docs/img/uml.jpg)
 
 More about these data stores is as follows:
@@ -84,7 +135,8 @@ More about these data stores is as follows:
 <ol type='a'>
   <li> <b>document</b><br>
   It contains the details about the documents that are added to the Doc-phi. The documents are identified by a unique identifier <a href="https://docs.python.org/3/library/uuid.html">uuid</a>. The values contain the attribute and its details in the form of dictionary.
-  
+
+
   <br>
   <li> <b>tf</b><br>
   tf stands for the term-frequency and has its reference from the <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2">tf-idf</a>. The tf store contains the frequency of each of the tokens present in all the documents. The key for the tf store is obtained by concatenating the document id with the token itself (as string).
@@ -97,18 +149,21 @@ More about these data stores is as follows:
   <li> <b>token</b><br>
   This data store tracks the list of tokens present in each document. The key is constituted by the document_id. 
 </ol>
- 
+
 
 #### Data Access Object (DAO)
+
 Doc-phi utilises DAO as an interface which provides the data operations without exposing the details of the database. As a result, there is no tight coupling between the database and the application logic, and a different database can be used without affecting the main application. 
 
 
 ### 3. Query Processing
+
 Doc-phi takes query in the form of natural language and returns a list of most relevant documents. This entire functionality is handled by the ```QueryEngine``` class and ```SemanticEmbedder``` module. The series of operations can be broken down into following functional unites:
 
 <ol type='a' >
   <li> <b>Non-pipelined processing</b><br>
   The queries are first processed to convert it in the tokens. The process executes in a non-pipelined fashion since the size of queries won't be too large to be executed efficiently by the pipeline. The processing steps are similar to that of the <i>distributed pipeline</i> that we discussed before.
+
 
   <br>
   <li> <b>Query Augmentation</b><br>
@@ -116,9 +171,11 @@ Doc-phi takes query in the form of natural language and returns a list of most r
 
   <br>
   <b><li> <b>2-level filtering</b></br></b>
+
   <ol type='i'>
   <li> <b>Ranking Function</b><br>
   In the 1st level of filtering, <b>Okapi BM25</b> ranking function is used to select top k documents from the search space. Okapi BM25 makes use of the tf-idf on the <i>augmented query tokens</i> to filter out the documents using these query tokens. More details on the ranking function can be found on this <a href="https://en.m.wikipedia.org/wiki/Okapi_BM25"> wikipedia page</a>.
+
 
   <br>
   <li> <b>Sentence Embeddings</b><br>
