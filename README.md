@@ -13,11 +13,11 @@ The application consists of a backend daemon service and a command line interfac
 
 
 ## Table of Contents
-1. [Installation](#Installation)
-    * [Docker Container](#Docker Container)
-    * [Manual Installation](#Manual Installation)
-    * [Dependencies](#Dependencies)
-2. [Usage](#Usage)
+1. [Installation](#installation)
+    * [Docker Container](#docker-container)
+    * [Manual Installation](#manual-installation)
+    * [Dependencies](#dependencies)
+2. [Usage](#usage)
     * [Adding Documents](#1-adding-documents)
     * [Querying based on Natural Language](#2-querying-based-on-natural-language)
     * [Listing of the Tags](#3-listing-of-the-tags)
@@ -46,7 +46,7 @@ To use the application follow the given steps:-
 3. Create a container from the pulled image using the following command:
 
    ```
-sudo docker run -v path_to_files:/home/data/ -it doc_phi
+   sudo docker run -v path_to_files:/home/data/ -it doc_phi
    ```
 
    Replace the variable `path_to_files` with the complete path of directory containing all document files .
@@ -250,25 +250,26 @@ Doc-Phi utilises DAO as an interface which provides the data operations without 
 Doc-Phi takes query in the form of natural language and returns a list of most relevant documents. This entire functionality is handled by the ```QueryEngine``` class and ```SemanticEmbedder``` module. The series of operations can be broken down into following functional unites:
 
 <ol type='a' >
-  <li> <b>Non-pipelined processing</b></li><br>
+  <li> <b>Non-pipelined processing</b></li>
   The queries are first processed to convert it in the tokens. The process executes in a non-pipelined fashion since the size of queries won't be too large to be executed efficiently by the pipeline. The processing steps are similar to that of the <i>distributed pipeline</i> that we discussed before.
-
-
   <br>
-  <li> <b>Query Augmentation</b><li><br>
+  <br>
+  <li> <b>Query Augmentation</b></li>
   The list of tokens retrieved after processing the query undergo an augmentation step. This step improves the search results by adding a variety of semantically similar tokens to the search space of the query. The augmentation process is carried out using the <a href="https://nlpaug.readthedocs.io/en/latest/"> nlapaug </a> module.
 
   <br>
-  <b><li> <b>2-level filtering</b></br></b>
-
-  <ol type='i'>
-  <li> <b>Ranking Function</b><br>
-  In the 1st level of filtering, <b>Okapi BM25</b> ranking function is used to select top k documents from the search space. Okapi BM25 makes use of the tf-idf on the <i>augmented query tokens</i> to filter out the documents using these query tokens. More details on the ranking function can be found on this <a href="https://en.m.wikipedia.org/wiki/Okapi_BM25"> wikipedia page</a>.
-
-
   <br>
-  <li> <b>Sentence Embeddings</b><br>
-  Sentence embeddings are used to refine and fine-tune the search space by taking into account the semantic meaning of the queries. The ranking function doesn't take into the account the semantic proximity between the tokens and the documents. <br> Sentence embeddings can be calculated using 2 different methods - (i) MSMARCO Models, and (ii) BERT Models. <br>In our implementation, MSMARCO is expected to perform better than the BERT models since MSMARCO directly utilises transformers to calculate the sentence level embeddings. On the other hand for BERT model, first the word embeddings are found out which are then combined to form the sentence embeddings using suitable weights. More details on MSMARCO models can be found <a href="https://www.sbert.net/docs/pretrained-models/msmarco-v3.html"> here</a>. <br>
+  <li> <b>2-level filtering</b></li>
+
+   <br>
+  <ol type='i'>
+  <li> <b>Ranking Function</b></li>
+  In the 1st level of filtering, <b>Okapi BM25</b> ranking function is used to select top k documents from the search space. Okapi BM25 makes use of the tf-idf on the <i>augmented query tokens</i> to filter out the documents using these query tokens. More details on the ranking function can be found on this <a href="https://en.m.wikipedia.org/wiki/Okapi_BM25"> wikipedia page</a>.
+  <br>
+  <br>
+  <li> <b>Sentence Embeddings</b></li>
+  Sentence embeddings are used to refine and fine-tune the search space by taking into account the semantic meaning of the queries. The ranking function doesn't take into the account the semantic proximity between the tokens and the documents. <br> Sentence embeddings can be calculated using 2 different methods - (i) MSMARCO Models, and (ii) BERT Models. <br>In our implementation, MSMARCO is expected to perform better than the BERT models since MSMARCO directly utilises transformers to calculate the sentence level embeddings. On the other hand for BERT model, first the word embeddings are found out which are then combined to form the sentence embeddings using suitable weights. More details on MSMARCO models can be found <a href="https://www.sbert.net/docs/pretrained-models/msmarco-v3.html"> here</a>. <br> 
+     <br>
 
   On obtaining the sentence embeddings for the query, the cosine similarity is found between the documents obtained after level-1 filtering and the query. Thereafter the resultant documents are displayed in descending order of their relevance.
   </ol>
