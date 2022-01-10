@@ -1,12 +1,12 @@
 # Doc-Phi: Intelligent Document Finder
 
-Doc-Phi is a Python based application written for efficient retrieval of documents in your device based on natural language queries. It currently supports the following operations.
+Doc-Phi is a Python-based application written for efficient retrieval of documents in your device based on natural language queries. It currently supports the following operations.
 
 - **Adding** documents to Doc-Phi
 - **Querying** based on natural language to find the most relevant documents
 - **Listing** manually and automatically assigned tags to a particular document
 
-The application consists of a backend daemon service and a command line interface.
+The application consists of a backend daemon service and a command-line interface.
 
 ![gif](docs/doc_phi.gif)
 
@@ -27,7 +27,6 @@ The application consists of a backend daemon service and a command line interfac
         * [Data Access Object](#data-access-object-dao)
     * [Query Processing](#3-query-processing)
     * [Command Line Interface](#4-command-line-interface)
-    * [Miscellaneous](#5-miscellaneous)
 * [License](#license)
 
 ## Installation
@@ -285,10 +284,6 @@ The server is associated with a message queue where all clients are allowed to w
 
 The client is designed to sleep after placing a request. The server writes the response into a shared memory location which is known to the client as well. The server then raises an OS level signal to wake the client up.
 
-### 5. Miscellaneous
-
-To be completed...
-
-Maybe include other details like design patterns
-
 ## License
+
+[BSD 2-Clause "Simplified" Lisence]('./LICENSE')
