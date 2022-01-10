@@ -8,6 +8,29 @@ Doc-Phi is a Python based application written for efficient retrieval of documen
 
 The application consists of a backend daemon service and a command line interface.
 
+![](./doc_phi.gif)
+
+
+
+## Table of Contents
+1. [Installation](#Installation)
+    * [Docker Container](#Docker Container)
+    * [Manual Installation](#Manual Installation)
+    * [Dependencies](#Dependencies)
+2. [Usage](#Usage)
+    * [Adding Documents](#1-adding-documents)
+    * [Querying based on Natural Language](#2-querying-based-on-natural-language)
+    * [Listing of the Tags](#3-listing-of-the-tags)
+3. [How Doc-Phi works](#how-doc-phi-works)
+    * [Document Processing](#1-document-processing)
+    * [Database Management System](#2-database-management-system)
+        * [Schema](#schema)
+        * [Data Access Object](#data-access-object-dao)
+    * [Query Processing](#3-query-processing)
+    * [Command Line Interface](#4-command-line-interface)
+    * [Miscellaneous](#5-miscellaneous)
+4. [License](#license)
+
 ## Installation
 
 #### Docker Container
@@ -185,7 +208,7 @@ We have defined our own ontology (tag set) for this purpose which is derived fro
 
 ### 2. Database Management System
 
-Doc-phi uses **LMDB** (Lightning Memory-Mapped Database) as its database. LMDB is a key-value pair database whose following functionalities motivated its use:
+Doc-Phi uses **LMDB** (Lightning Memory-Mapped Database) as its database. LMDB is a key-value pair database whose following functionalities motivated its use:
 
 * Read transactions are extremely cheap.  
 * Memory mapped, allowing for zero copy lookup and iteration.  
@@ -193,7 +216,7 @@ Doc-phi uses **LMDB** (Lightning Memory-Mapped Database) as its database. LMDB i
 
 More about lmdb can be found at its [official documentation](https://lmdb.readthedocs.io/en/release/#).
 
-#### Schema
+### Schema
 
 ![schema](docs/img/uml.jpg)
 
@@ -202,7 +225,6 @@ More about these data stores is as follows:
 <ol type='a'>
   <li> <b>document</b><br>
   It contains the details about the documents that are added to the Doc-phi. The documents are identified by a unique identifier <a href="https://docs.python.org/3/library/uuid.html">uuid</a>. The values contain the attribute and its details in the form of dictionary.
-
 
   <br>
   <li> <b>tf</b><br>
@@ -218,14 +240,14 @@ More about these data stores is as follows:
 </ol>
 
 
-#### Data Access Object (DAO)
+### Data Access Object (DAO)
 
-Doc-phi utilises DAO as an interface which provides the data operations without exposing the details of the database. As a result, there is no tight coupling between the database and the application logic, and a different database can be used without affecting the main application. 
+Doc-Phi utilises DAO as an interface which provides the data operations without exposing the details of the database. As a result, there is no tight coupling between the database and the application logic, and a different database can be used without affecting the main application. 
 
 
 ### 3. Query Processing
 
-Doc-phi takes query in the form of natural language and returns a list of most relevant documents. This entire functionality is handled by the ```QueryEngine``` class and ```SemanticEmbedder``` module. The series of operations can be broken down into following functional unites:
+Doc-Phi takes query in the form of natural language and returns a list of most relevant documents. This entire functionality is handled by the ```QueryEngine``` class and ```SemanticEmbedder``` module. The series of operations can be broken down into following functional unites:
 
 <ol type='a' >
   <li> <b>Non-pipelined processing</b></li><br>
