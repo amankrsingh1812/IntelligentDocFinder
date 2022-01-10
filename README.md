@@ -187,9 +187,11 @@ Doc-phi takes query in the form of natural language and returns a list of most r
 
 ### 4. Command Line Interface
 
-To be completed...
+The tool is made available as a client server program. The server is intended to be run as a daemon to provide service to possibly multiple clients. The client at present has a command line interface.
 
-How processes interact
+The server is associated with a message queue where all clients are allowed to write their requests along with their process identifier (PID). Message queue allows correctness of results as there is a single server. This condition is also demanded by LMDB.
+
+The client is designed to sleep after placing a request. The server writes the response into a shared memory location which is known to the client as well. The server then raises an OS level signal to wake the client up.
 
 ### 5. Miscellaneous
 
