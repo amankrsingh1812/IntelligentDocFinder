@@ -33,13 +33,13 @@ The application consists of a backend daemon service and a command-line interfac
 
 #### Docker Container
 
-A ready to use docker image, which consists of all dependencies pre-installed and starts with Doc-Phi backend daemon running, is available in the following link : https://hub.docker.com/r/aman18e/doc_phi
+A ready to use docker image, which consists of all dependencies pre-installed and starts with Doc-Phi backend daemon running, is available at the following link: https://hub.docker.com/r/aman18e/doc_phi
 
 To use the application follow the given steps:-
 
-1. Install docker engine on the local system by referring to https://docs.docker.com/get-docker/
+1. Install docker-engine on the local system by referring to https://docs.docker.com/get-docker/
 
-2. Pull the image from docker hub using the command ` sudo docker pull aman18e/doc_phi `
+2. Pull the image from the docker hub using the command ` sudo docker pull aman18e/doc_phi `
 
 3. Create a container from the pulled image using the following command:
 
@@ -47,9 +47,9 @@ To use the application follow the given steps:-
    sudo docker run -v path_to_files:/home/data/ -it doc_phi
    ```
 
-   Replace the variable `path_to_files` with the complete path of directory containing all document files .
+   Replace the variable `path_to_files` with the complete path of the directory containing all document files .
 
-   The running container can be stopped by using `exit` command. To restart use the command `sudo docker start container_name`
+   The running container can be stopped by using the `exit` command. To restart use the command `sudo docker start container_name`
    
 
 #### Manual Installation
@@ -62,7 +62,7 @@ Users can also manually install all dependencies and run the application using p
 
 3. Install python 3.8 & pip in the local system
 
-4. Install pytorch by running`pip install torch==1.10.1+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html`
+4. Install PyTorch by running `pip install torch==1.10.1+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html`
 
 5. Run `pip install -r requirements.txt` to install remaining python dependencies. 
 
@@ -74,13 +74,13 @@ Users can also manually install all dependencies and run the application using p
    sudo systemctl start docfinder.service
    ````
 
-7. Set up shortcut for CLI using the command given below:
+7. Set up a shortcut for CLI using the command given below:
 
    ````
    echo 'alias doc-phi="python3.8 /home/IntelligentDocFinder/cli/doc_phi.py"' >> ~/.bashrc
    ````
 
-   The application can be now used by `doc-phi` command.
+   The application can be now used by the `doc-phi` command.
 
 #### Dependencies
 
@@ -104,7 +104,7 @@ The major dependencies include:
 
 ## Usage
 
-The command line interface for the doc-phi can be used as:
+The command-line interface for the doc-phi can be used as:
 
 ```
 Usage: doc-phi [OPTIONS] COMMAND [ARGS]...
@@ -118,17 +118,17 @@ Commands:
   tags    Retrieve allotted tags for a file
 ```
 
-Currently following operations can be performed:
+Currently, the following operations can be performed:
 
 ### 1. Adding Documents
 
-Various types of the documents can be added using the following syntax:
+Various types of documents can be added using the following syntax:
 
 ```
 doc-phi add
 ```
 
-After executing this command, various details pertaining to the document can be added using interactive interface.
+After executing this command, various details pertaining to the document can be added using an interactive interface.
 
 ### 2. Querying based on Natural Language
 
@@ -150,7 +150,7 @@ doc-phi tags -f <file_name>
 
 ## How Doc-Phi works
 
-The querying backend for Doc-Phi is an amalgamation of conventional ranking algorithm, BM25, based on TF-IDF and contextual sentence level BERT model, MSMARCO. All neural models are implemented on the PyTorch backend. The indexes and documents' metadata is stored using the Lightening Memory-Mapped Database (LMDB). An ontology derived from the union of FIGER and TypeNet ontologies is used by Doc-Phi to automatically assign tags from a generic knowledge space.
+The querying backend for Doc-Phi is an amalgamation of the conventional ranking algorithm, BM25, based on TF-IDF and contextual sentence level BERT model, MSMARCO. All neural models are implemented on the PyTorch backend. The indexes and documents' metadata is stored using the Lightening Memory-Mapped Database (LMDB). An ontology derived from the union of FIGER and TypeNet ontologies is used by Doc-Phi to automatically assign tags from a generic knowledge space.
 
 ### Data Flow Diagram
 ![Data Flow Diagram](docs/img/data_flow_diagram.jpeg)
@@ -168,15 +168,15 @@ The core functionality of Doc-Phi is to efficiently process documents associated
 
 
 
-Along with the processing required for querying, documents are also assigned tags which can are shown while querying. These tags are also assigned in this component.
+Along with the processing required for querying, documents are also assigned tags which are shown while querying. These tags are also assigned in this component.
 
 This processing is achieved by the following logical steps:
 
 #### a. Paragraphs Extractor
 
-The processing operations within each document are performed at the granularity of a paragraph. Paragraphs extractor module lays out the interface and implements classes capable of reading documents and returning iterators over the paragraphs for various file types.
+The processing operations within each document are performed at the granularity of a paragraph. The paragraphs extractor module lays out the interface and implements classes capable of reading documents and returning iterators over the paragraphs for various file types.
 
-The module is thread safe, so as to be used along with our distributed pipeline. A factory for iterators is also provided.
+The module is thread-safe, so as to be used along with our distributed pipeline. A factory for iterators is also provided.
 
 #### b. Distributed Pipeline
 
@@ -190,7 +190,7 @@ The pipeline uses iterators of a paragraphs extractor, a list of the various pro
 
 TF-IDF stands for “Term Frequency — Inverse Document Frequency”, a technique to quantify words in a set of documents. A score is computed for each word to signify its importance in the document and corpus. 
 
-Term Frequency, for a given word tells how many times it occurs in a particular document. Inverse Document Frequency measures the informativeness of a word. Given the words from a query, TF and TDF can together be used to find relevant documents. This was how search engines worked until a few years ago. However, we using this (with the BM25 algorithm) only to filter relevant documents.
+Term Frequency, for a given word, tells how many times it occurs in a particular document. Inverse Document Frequency measures the informativeness of a word. Given the words from a query, TF and TDF can together be used to find relevant documents. This was how search engines worked until a few years ago. However, Doc-Phi uses this (with the BM25 algorithm) only to filter relevant documents.
 
 #### d. Embeddings for Documents
 
@@ -278,12 +278,12 @@ Doc-Phi takes query in the form of natural language and returns a list of most r
 
 ### 4. Command Line Interface
 
-The tool is made available as a client server program. The server is intended to be run as a daemon to provide service to possibly multiple clients. The client at present has a command line interface.
+The tool is made available as a client-server program. The server is intended to be run as a daemon to provide service to possibly multiple clients. The client at present has a command-line interface.
 
-The server is associated with a message queue where all clients are allowed to write their requests along with their process identifier (PID). Message queue allows correctness of results as there is a single server. This condition is also demanded by LMDB.
+The server is associated with a message queue where all clients are allowed to write their requests along with their process identifier (PID). The message queue allows the correctness of results as there is a single server. This condition is also demanded by LMDB.
 
-The client is designed to sleep after placing a request. The server writes the response into a shared memory location which is known to the client as well. The server then raises an OS level signal to wake the client up.
+The client is designed to sleep after placing a request. The server writes the response into a shared memory location which is known to the client as well. The server then raises an OS-level signal to wake the client up.
 
 ## License
 
-[BSD 2-Clause "Simplified" Lisence]('./LICENSE')
+[BSD 2-Clause "Simplified" Lisence](./LICENSE)
