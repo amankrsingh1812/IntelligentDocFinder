@@ -8,20 +8,19 @@ Doc-Phi is a Python based application written for efficient retrieval of documen
 
 The application consists of a backend daemon service and a command line interface.
 
-![](./doc_phi.gif)
-
+![gif](docs/doc_phi.gif)
 
 
 ## Table of Contents
-1. [Installation](#installation)
+* [Installation](#installation)
     * [Docker Container](#docker-container)
     * [Manual Installation](#manual-installation)
     * [Dependencies](#dependencies)
-2. [Usage](#usage)
+* [Usage](#usage)
     * [Adding Documents](#1-adding-documents)
     * [Querying based on Natural Language](#2-querying-based-on-natural-language)
     * [Listing of the Tags](#3-listing-of-the-tags)
-3. [How Doc-Phi works](#how-doc-phi-works)
+* [How Doc-Phi works](#how-doc-phi-works)
     * [Document Processing](#1-document-processing)
     * [Database Management System](#2-database-management-system)
         * [Schema](#schema)
@@ -29,7 +28,7 @@ The application consists of a backend daemon service and a command line interfac
     * [Query Processing](#3-query-processing)
     * [Command Line Interface](#4-command-line-interface)
     * [Miscellaneous](#5-miscellaneous)
-4. [License](#license)
+* [License](#license)
 
 ## Installation
 
@@ -153,6 +152,9 @@ doc-phi tags -f <file_name>
 ## How Doc-Phi works
 
 The querying backend for Doc-Phi is an amalgamation of conventional ranking algorithm, BM25, based on TF-IDF and contextual sentence level BERT model, MSMARCO. All neural models are implemented on the PyTorch backend. The indexes and documents' metadata is stored using the Lightening Memory-Mapped Database (LMDB). An ontology derived from the union of FIGER and TypeNet ontologies is used by Doc-Phi to automatically assign tags from a generic knowledge space.
+
+### Data Flow Diagram
+![Data Flow Diagram](docs/img/data_flow_diagram.jpeg)
 
 The following sections describe the details of various components of the application.
 
