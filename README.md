@@ -8,10 +8,77 @@ Doc-Phi is a Python based application written for efficient retrieval of documen
 
 The application consists of a backend daemon service and a command line interface.
 
-
 ## Installation
 
-## Dependencies
+#### Docker Container
+
+A ready to use docker image, which consists of all dependencies pre-installed and starts with Doc-Phi backend daemon running, is available in the following link : https://hub.docker.com/r/aman18e/doc_phi
+
+To use the application follow the given steps:-
+
+1. Install docker engine on the local system by referring to https://docs.docker.com/get-docker/
+
+2. Pull the image from docker hub using the command ` sudo docker pull aman18e/doc_phi `
+
+3. Create a container from the pulled image using the following command:
+
+   ```
+sudo docker run -v path_to_files:/home/data/ -it doc_phi
+   ```
+
+   Replace the variable `path_to_files` with the complete path of directory containing all document files .
+
+   The running container can be stopped by using `exit` command. To restart use the command `sudo docker start container_name`
+   
+
+#### Manual Installation
+
+Users can also manually install all dependencies and run the application using python natively installed in the local system/virtual environment by following steps:
+
+1. Clone the repository from by `git clone https://github.com/ShivanshMishra18/IntelligentDocFinder.git`  
+
+2. Run `cd IntelligentDocFinder`
+
+3. Install python 3.8 & pip in the local system
+
+4. Install pytorch by running`pip install torch==1.10.1+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html`
+
+5. Run `pip install -r requirements.txt` to install remaining python dependencies. 
+
+6. Create the backend daemon service from `docfinder.service` file :
+
+   ````
+   sudo cp docfinder.service /etc/systemd/systemd/docfinder.service
+   sudo systemctl enable docfinder.service
+   sudo systemctl start docfinder.service
+   ````
+
+7. Set up shortcut for CLI using the command given below:
+
+   ````
+   echo 'alias doc-phi="python3.8 /home/IntelligentDocFinder/cli/doc_phi.py"' >> ~/.bashrc
+   ````
+
+   The application can be now used by `doc-phi` command.
+
+#### Dependencies
+
+The major dependencies include:
+
+* python 3.8
+* pytorch 1.10.1 
+* click 8.0.3
+* huggingface-hub 0.2.1
+* ipcqueue 0.9.7
+* lmdb 1.2.1
+* nltk 3.6.6
+* numpy 1.21.5
+* python-docx 0.8.11
+* python-pptx 0.6.21
+* scikit-learn 1.0.1
+* sentence-transformers 2.1.0
+* transformers .14.1
+  
 
 
 ## Usage
@@ -161,12 +228,12 @@ Doc-phi utilises DAO as an interface which provides the data operations without 
 Doc-phi takes query in the form of natural language and returns a list of most relevant documents. This entire functionality is handled by the ```QueryEngine``` class and ```SemanticEmbedder``` module. The series of operations can be broken down into following functional unites:
 
 <ol type='a' >
-  <li> <b>Non-pipelined processing</b><br>
+  <li> <b>Non-pipelined processing</b></li><br>
   The queries are first processed to convert it in the tokens. The process executes in a non-pipelined fashion since the size of queries won't be too large to be executed efficiently by the pipeline. The processing steps are similar to that of the <i>distributed pipeline</i> that we discussed before.
 
 
   <br>
-  <li> <b>Query Augmentation</b><br>
+  <li> <b>Query Augmentation</b><li><br>
   The list of tokens retrieved after processing the query undergo an augmentation step. This step improves the search results by adding a variety of semantically similar tokens to the search space of the query. The augmentation process is carried out using the <a href="https://nlpaug.readthedocs.io/en/latest/"> nlapaug </a> module.
 
   <br>

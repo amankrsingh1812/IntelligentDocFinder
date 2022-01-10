@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ADD ./IntelligentDocFinder /home/IntelligentDocFinder
+ADD ./ /home/IntelligentDocFinder
 
 RUN apt-get update
 RUN apt-get install -y build-essential
@@ -22,5 +22,6 @@ RUN pip install -r requirements.txt
 
 RUN python3.8 setup.py
 
+RUN echo 'alias doc-phi="python3.8 /home/IntelligentDocFinder/cli/doc_phi.py"' >> ~/.bashrc
 
 ENTRYPOINT nohup python3.8 index.py > server.logs 2>&1 & bash
